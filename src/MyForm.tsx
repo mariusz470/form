@@ -4,12 +4,10 @@ import MyTextInput from "./components/MyTextInput";
 import NumberInput from "./components/NumberInput";
 import SelectInput from "./components/SelectInput";
 import TimeInput from "./components/TimeInput";
-import { ThemeProvider, createMuiTheme } from "@material-ui/core/styles";
-import { green, orange } from "@material-ui/core/colors";
-import { Grid } from "@material-ui/core";
+import { Button, Grid } from "@material-ui/core";
 import SoupInput from "./components/SoupInput";
-
-const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+import FloatingInput from "./components/FloatingInput";
+import axios from "axios";
 
 interface Values {
   name: string;
@@ -28,19 +26,51 @@ interface Values {
 }
 
 const onSubmit = async (values: Values) => {
-  await sleep(300);
-  window.alert(JSON.stringify(values, undefined, 2));
+  const sendForm = async (data: Object) => {
+    try {
+      const headers = {
+        "Content-Type": "application/json",
+      };
+      const resp = await axios.post(
+        "https://frosty-wood-6558.getsandbox.com:443/dishes",
+        data,
+        {
+          headers: headers,
+        }
+      );
+      alert(resp.data);
+    } catch (err) {
+      console.log(err, data);
+    }
+  };
+  if (values.type === "pizza") {
+    const specific = values.pizza;
+    delete values.pizza;
+    const data = { ...values, ...specific };
+    sendForm(data);
+  }
+  if (values.type === "soup") {
+    const specific = values.soup;
+    delete values.soup;
+    const data = { ...values, ...specific };
+    sendForm(data);
+  }
+  if (values.type === "sandwich") {
+    const specific = values.sandwich;
+    delete values.sandwich;
+    const data = { ...values, ...specific };
+    sendForm(data);
+  }
 };
 
 export const MyForm: React.FC = () => {
   return (
-    <div className="form-container">
+    <div>
       <h1>Order</h1>
       <h2>Place your order</h2>
       <p>Submit the form to create your dish</p>
 
       <Form
-        className="form"
         onSubmit={onSubmit}
         initialValues={{ name: "", preparation_time: "00:00:00" }}
         render={({ handleSubmit, form, submitting, pristine, values }) => {
@@ -115,7 +145,7 @@ export const MyForm: React.FC = () => {
                     </Grid>
                     <Field<number>
                       name="pizza.diameter"
-                      component={NumberInput}
+                      component={FloatingInput}
                       placeholder="diameter"
                       validate={(val) => (val ? undefined : "Required")}
                     />
@@ -151,15 +181,18 @@ export const MyForm: React.FC = () => {
                 </Grid>
               )}
 
-              <div>
-                <button type="submit" disabled={submitting || pristine}>
+              <div style={{ padding: "10px" }}>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  type="submit"
+                  disabled={submitting || pristine}
+                  style={{ marginRight: "10px" }}
+                >
                   Submit
-                </button>
-                <button type="button" disabled={submitting || pristine}>
-                  Reset
-                </button>
+                </Button>
               </div>
-              <pre>{JSON.stringify(values, undefined, 2)}</pre>
+              {/* <pre>{JSON.stringify(values, undefined, 2)}</pre> */}
             </form>
           );
         }}

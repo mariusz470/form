@@ -5,7 +5,7 @@ import { FieldRenderProps } from "react-final-form";
 type Props = FieldRenderProps<number, any>;
 
 const SoupInput: React.FC<Props> = ({ input, meta, ...rest }: Props) => (
-  <div>
+  <div style={{ width: "30%" }}>
     <TextField
       {...input}
       {...rest}

@@ -7,6 +7,7 @@ type Props = FieldRenderProps<Date, any>;
 const TimeInput: React.FC<Props> = ({ input, meta, ...rest }: Props) => {
   return (
     <TextField
+      style={{ width: "30%" }}
       {...input}
       {...rest}
       id="time"
